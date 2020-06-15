@@ -1,0 +1,66 @@
+<div class="card bg-light mb-3">
+    <div class="card-header">
+        <h3 class="text-center">{{titulo}}</h3>
+    </div>
+    <div class="card-body">
+        <button class="btn btn-link my-2" routerLink="/examenes">&lt;&lt;volver</button>
+        <form>
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" name="nombre" class="form-control" [(ngModel)]="model.nombre">
+                <div class="alert alert-danger" *ngIf="error && error.nombre">
+                    {{error.nombre}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="asignaturaPadre">Asignatura</label>
+                <select (change)="cargarHijos()" name="asignaturaPadre" id="asignaturaPadre" [compareWith]="compararAsigantura"
+                    [(ngModel)]="model.asignaturaPadre" class="form-control">
+                    <option [ngValue]="undefined">--- Seleccinar una asignatura---</option>
+                    <option *ngFor="let asigatura of asignaturasPadre" [ngValue]="asigatura">
+                        {{asigatura.nombre}}
+                    </option>
+                </select>
+                <div class="alert alert-danger" *ngIf="error && error.asignaturaPadre">
+                    {{error.asignaturaPadre}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="asignaturaHija">Asignatura Hija</label>
+                <select name="asignaturaHija" id="asignaturaHija" [compareWith]="compararAsigantura" [(ngModel)]="model.asignaturaHija"
+                    class="form-control">
+                    <option [ngValue]="undefined">--- Seleccinar una asignatura----</option>
+                    <option *ngFor="let asigatura of asignaturasHija" [ngValue]="asigatura">
+                        {{asigatura.nombre}}
+                    </option>
+                </select>
+                <div class="alert alert-danger" *ngIf="error && error.asignaturaHija">
+                    {{error.asignaturaHija}}
+                </div>
+            </div>
+            <button (click)="agregarPregunta()" class="btn btn-light btn-lg my-3">
+                Agregar pregunta
+            </button>
+            <div class="form-group" *ngFor="let pregunta of model.preguntas; let i= index">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <label for="">Pregunta {{i+1}}:</label>
+                    </div>
+                    <div class="col-sm-6">
+                        <input type="text" value="{{pregunta.texto}}" class="form-control"
+                            (change)="asignarTexto(pregunta, $event)">
+                    </div>
+                    <div class="col-sm-1">
+                        <button (click)="eliminarPregunta(pregunta)" class="btn btn-danger btn-sm">x</button>
+                    </div>
+                </div>
+            </div>
+            <div class="alert alert-danger" *ngIf="errorPregunta">
+                    {{errorPregunta}}
+                </div>
+            <div class="form-group">
+                <button class="btn btn-primary" (click)="model.id ? editar():crear()">{{model.id? 'Editar':'Crear'}}</button>
+            </div>
+        </form>
+    </div>
+</div>

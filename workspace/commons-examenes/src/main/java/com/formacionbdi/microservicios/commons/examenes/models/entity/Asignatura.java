@@ -19,11 +19,11 @@ public class Asignatura {
     private String nombre;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = {"hijos"}, allowSetters = true)
+    @JsonIgnoreProperties(value = {"hijos", "handler","hibernateLazyInitializer"}, allowSetters = true)
     private Asignatura padre;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "padre", cascade = CascadeType.ALL)
-    @JsonIgnoreProperties(value = {"padre"}, allowSetters = true)
+    @JsonIgnoreProperties(value = {"padre", "handler", "hibernateLazyInitializer"}, allowSetters = true)
     private List<Asignatura> hijos;
 
     /**

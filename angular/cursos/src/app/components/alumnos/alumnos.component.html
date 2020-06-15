@@ -1,0 +1,71 @@
+<div class="card bg-light mb-3">
+    <div class="card-header">
+        <h3 class="text-center">{{titulo}}</h3>
+    </div>
+    <div class="card-body">
+        <div>
+            <button class="btn btn-primary my-2" routerLink="/alumnos/form" >crear</button>
+            <div class="alert alert-info" *ngIf="lista?.length == 0">
+                No hay alumnos en el sistema
+            </div>
+            <table class="table table-hover table-striped" *ngIf="lista?.length > 0">
+                <thead>
+                    <th>id</th>
+                    <th>foto</th>
+                    <th>nombre</th>
+                    <th>apellido</th>
+                    <th>email</th>
+                    <th>creado en</th>
+                    <th>examenes</th>
+                    <th>editar</th>
+                    <th>eliminar</th>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let alumno of lista">
+                        <td>{{alumno.id}}</td>
+                        <td>
+                            <img *ngIf="alumno.fotoHashCode"
+                            [src]="baseEndpoint+ '/uploads/img/' + alumno.id + '?fotoHashCode=' + alumno.fotoHashCode" 
+                            class="img-thumbnail rounded"
+                            style="width: 64px; cursor: pointer;">
+                            <img *ngIf="!alumno.fotoHashCode" 
+                            src="/assets/images/no-usuario.png" 
+                            class="img-thumbnail rounded"
+                            style="width: 64px; cursor: pointer;">
+                        </td>
+                        <td>{{alumno.nombre}}</td>
+                        <td>{{alumno.apellidos}}</td>
+                        <td>{{alumno.email}}</td>
+                        <td>{{alumno.createAt | date: 'yyyy/MM/dd'}}</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm"
+                                [routerLink]="['/alumnos/responder-examen', alumno.id]"  >
+                                examenes
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-secondary btn-sm" 
+                                [routerLink]="['/alumnos/form',alumno.id]" >
+                                editar
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger btn-sm"  
+                                (click)="eliminar(alumno)">
+                                <img src="/assets/icons/basura.png" alt="eliminar">
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <mat-paginator [length]="totalRegistros"
+              [pageSize]="totalPorPagina"
+              [pageIndex]="paginaActual"
+              [pageSizeOptions]="[5, 10, 25, 100]"
+              (page) = "paginar($event)"
+              showFirstLastButtons>
+            </mat-paginator>
+        </div>
+    </div>
+  </div>
+

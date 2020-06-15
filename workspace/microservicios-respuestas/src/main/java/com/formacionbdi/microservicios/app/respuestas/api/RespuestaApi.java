@@ -18,12 +18,12 @@ public class RespuestaApi {
     }
 
     @GetMapping("/alumno/{alumnoId}/examen/{examenId}")
-    public ResponseEntity<?> buscarAlumboPorIdExamenPorId(@PathVariable Long alumnoId, @PathVariable Long examenId){
+    public ResponseEntity<?> obtenerRespuestasPorAlumnoPorExamenId(@PathVariable Long alumnoId, @PathVariable Long examenId){
         return ResponseEntity.ok(new ResponseResult<Iterable<Respuesta>>(respuestaService.findRespuestaByAlumnoByexamen(alumnoId,examenId)));
     }
 
     @GetMapping("/alumno/{alumnoId}/examenes-respondidos")
-    public ResponseEntity<?> obtenerIdPorAlumno(@PathVariable Long alumnoId){
+    public ResponseEntity<?> obtenerExamenesIdsConRespuestaPorAlumno(@PathVariable Long alumnoId){
         return ResponseEntity.ok(new ResponseResult<Iterable<Long>>(respuestaService.findExamenesIdsConRespuestasByAlumno(alumnoId)));
     }
 

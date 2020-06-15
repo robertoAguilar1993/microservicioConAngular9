@@ -31,9 +31,15 @@ public class Examen {
     @OneToMany(mappedBy = "examen", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pregunta> preguntas;
 
+    @JsonIgnoreProperties(value = { "handler","hibernateLazyInitializer"}, allowSetters = true)
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
-    private Asignatura asignatura;
+    private Asignatura asignaturaPadre;
+
+    @JsonIgnoreProperties(value = { "handler","hibernateLazyInitializer"}, allowSetters = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    private Asignatura asignaturaHija;
 
     @Transient
     private boolean respondido;
@@ -93,13 +99,6 @@ public class Examen {
         pregunta.setExamen(null);
     }
 
-    public Asignatura getAsignatura() {
-        return asignatura;
-    }
-
-    public void setAsignatura(Asignatura asignatura) {
-        this.asignatura = asignatura;
-    }
 
     public boolean isRespondido() {
         return respondido;
@@ -107,6 +106,22 @@ public class Examen {
 
     public void setRespondido(boolean respondido) {
         this.respondido = respondido;
+    }
+
+    public Asignatura getAsignaturaPadre() {
+        return asignaturaPadre;
+    }
+
+    public void setAsignaturaPadre(Asignatura asignaturaPadre) {
+        this.asignaturaPadre = asignaturaPadre;
+    }
+
+    public Asignatura getAsignaturaHija() {
+        return asignaturaHija;
+    }
+
+    public void setAsignaturaHija(Asignatura asignaturaHija) {
+        this.asignaturaHija = asignaturaHija;
     }
 
     @Override

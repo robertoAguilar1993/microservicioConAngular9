@@ -4,8 +4,8 @@ import com.formacionbdi.microservicios.app.respuestas.clients.ExamenFeignClient;
 import com.formacionbdi.microservicios.app.respuestas.models.entity.Respuesta;
 import com.formacionbdi.microservicios.app.respuestas.models.repository.RespuestaRepository;
 import com.formacionbdi.microservicios.commons.controllers.ResponseResult;
-import com.formacionbdi.microservicios.commons.examenes.bussines.ExamenBO;
-import com.formacionbdi.microservicios.commons.examenes.bussines.PreguntaBO;
+import com.formacionbdi.microservicios.commons.examenes.models.entity.Examen;
+import com.formacionbdi.microservicios.commons.examenes.models.entity.Pregunta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,9 +45,9 @@ public class RespuestaServiceImpl implements RespuestaService {
 
     @Override
     public Iterable<Respuesta> findRespuestaByAlumnoByexamen(Long alumnoId, Long examenId) {
-        ResponseResult<ExamenBO> responseResult= this.examenFeignClient.obtenerxamenPorId(examenId);
+        ResponseResult<Examen> responseResult= this.examenFeignClient.obtenerxamenPorId(examenId);
         if(responseResult != null && responseResult.getOperationStatus()){
-            List<PreguntaBO> preguntas = responseResult.getResult().getPreguntas();
+            List<Pregunta> preguntas = responseResult.getResult().getPreguntas();
             List<Long> preguntasIds = preguntas.stream().map(p->p.getId()).collect(Collectors.toList());
             Iterable<Respuesta> respuesta = this.respuestaRepository.findRespuestaByAlumnoByPreguntasIds(alumnoId, preguntasIds);
             respuesta = ((List<Respuesta>) respuesta).stream().map(r->{

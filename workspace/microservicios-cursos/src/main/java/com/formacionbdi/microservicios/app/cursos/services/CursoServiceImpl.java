@@ -2,7 +2,6 @@ package com.formacionbdi.microservicios.app.cursos.services;
 
 import com.formacionbdi.microservicios.app.cursos.clients.AlumnoFeingnClient;
 import com.formacionbdi.microservicios.app.cursos.clients.ResponseFeignClient;
-import com.formacionbdi.microservicios.app.cursos.mappers.ExamenMapper;
 import com.formacionbdi.microservicios.app.cursos.models.entity.Curso;
 import com.formacionbdi.microservicios.app.cursos.models.entity.CursoAlumno;
 import com.formacionbdi.microservicios.app.cursos.models.repository.CursoAlumnoRepository;
@@ -11,7 +10,6 @@ import com.formacionbdi.microservicios.commons.alumnos.bussines.AlumnoBO;
 import com.formacionbdi.microservicios.commons.alumnos.models.entity.Alumno;
 import com.formacionbdi.microservicios.commons.controllers.ResponseResult;
 import com.formacionbdi.microservicios.commons.controllers.ResponseSearchResult;
-import com.formacionbdi.microservicios.commons.examenes.bussines.ExamenBO;
 import com.formacionbdi.microservicios.commons.examenes.models.entity.Examen;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -115,13 +113,13 @@ public class CursoServiceImpl implements CursoService{
     }
 
     @Override
-    public Curso asignarExamenes(Long id, List<ExamenBO> examenes) {
+    public Curso asignarExamenes(Long id, List<Examen> examenes) {
         Optional<Curso> optionalCurso = this.cursoRepository.findById(id);
         if(!optionalCurso.isPresent()){
             return null;
         }
         Curso cursoDB = optionalCurso.get();
-        examenes.forEach(e -> cursoDB.addExamen(ExamenMapper.INSTANCE.ExamenToExamenBO(e)));
+        examenes.forEach(e -> cursoDB.addExamen(e));
         return this.cursoRepository.save(cursoDB);
     }
 
@@ -141,13 +139,13 @@ public class CursoServiceImpl implements CursoService{
     }
 
     @Override
-    public Curso eliminarExamen(Long id, ExamenBO examen) {
+    public Curso eliminarExamen(Long id, Examen examen) {
         Optional<Curso> optionalCurso = this.cursoRepository.findById(id);
         if(!optionalCurso.isPresent()){
             return null;
         }
         Curso cursoDB = optionalCurso.get();
-        cursoDB.removeExamen(ExamenMapper.INSTANCE.ExamenToExamenBO(examen));
+        cursoDB.removeExamen(examen);
         return  this.cursoRepository.save(cursoDB);
     }
 

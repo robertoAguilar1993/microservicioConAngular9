@@ -1,0 +1,63 @@
+<div class="card bg-light mb-3">
+    <div class="card-header">
+        <h3 class="text-center">{{titulo}}</h3>
+    </div>
+    <div class="card-body">
+        <div>
+            <button class="btn btn-primary my-2" routerLink="/cursos/form" >crear</button>
+            <div class="alert alert-info" *ngIf="lista?.length == 0">
+                No hay cursos en el sistema
+            </div>
+            <table class="table table-hover table-striped" *ngIf="lista?.length > 0">
+                <thead>
+                    <th>id</th>
+                    <th>nombre</th>
+                    <th>alumnos</th>
+                    <th>examenes</th>
+                    <th>creado en</th>
+                    <th>editar</th>
+                    <th>eliminar</th>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let curso of lista">
+                        <td>{{curso.id}}</td>
+                        <td>{{curso.nombre}}</td>
+                        <td>
+                            <button  class="btn btn-info btn-sm"
+                                [routerLink]="['/cursos/asiganr-alumnos',curso.id]" >
+                                Añadir ({{curso.alumnos.length}})
+                            </button>
+                        </td>
+                        <td>
+                            <button  class="btn btn-info btn-sm"
+                                [routerLink]="['/cursos/asiganr-examenes',curso.id]" >
+                                Añadir ({{curso.examenes.length}})
+                            </button>
+                        </td>
+                        <td>{{curso.createAt | date: 'yyyy/MM/dd'}}</td>
+                        <td>
+                            <button class="btn btn-secondary btn-sm" 
+                                [routerLink]="['/cursos/form',curso.id]" >
+                                editar
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger btn-sm"  
+                                (click)="eliminar(curso)">
+                                <img src="/assets/icons/basura.png" alt="eliminar">
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <mat-paginator [length]="totalRegistros"
+              [pageSize]="totalPorPagina"
+              [pageIndex]="paginaActual"
+              [pageSizeOptions]="[5, 10, 25, 100]"
+              (page) = "paginar($event)"
+              showFirstLastButtons>
+            </mat-paginator>
+        </div>
+    </div>
+  </div>
+

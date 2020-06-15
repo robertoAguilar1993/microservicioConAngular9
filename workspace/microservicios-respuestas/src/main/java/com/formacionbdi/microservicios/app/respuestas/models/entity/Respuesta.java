@@ -1,7 +1,6 @@
 package com.formacionbdi.microservicios.app.respuestas.models.entity;
 
 import com.formacionbdi.microservicios.commons.alumnos.models.entity.Alumno;
-import com.formacionbdi.microservicios.commons.examenes.bussines.PreguntaBO;
 import com.formacionbdi.microservicios.commons.examenes.models.entity.Pregunta;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
@@ -25,7 +24,7 @@ public class Respuesta {
     private Long alumnoId;
 
     @Transient
-    private PreguntaBO pregunta;
+    private Pregunta pregunta;
 
     private Long preguntaId;
 
@@ -53,11 +52,11 @@ public class Respuesta {
         this.alumno = alumno;
     }
 
-    public PreguntaBO getPregunta() {
+    public Pregunta getPregunta() {
         return pregunta;
     }
 
-    public void setPregunta(PreguntaBO pregunta) {
+    public void setPregunta(Pregunta pregunta) {
         this.pregunta = pregunta;
     }
 

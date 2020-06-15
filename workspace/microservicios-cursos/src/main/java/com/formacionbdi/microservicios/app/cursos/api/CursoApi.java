@@ -5,8 +5,7 @@ import com.formacionbdi.microservicios.app.cursos.services.CursoService;
 import com.formacionbdi.microservicios.commons.alumnos.bussines.AlumnoBO;
 import com.formacionbdi.microservicios.commons.controllers.GenericApi;
 import com.formacionbdi.microservicios.commons.controllers.ResponseResult;
-import com.formacionbdi.microservicios.commons.examenes.bussines.ExamenBO;
-import org.springframework.beans.factory.annotation.Value;
+import com.formacionbdi.microservicios.commons.examenes.models.entity.Examen;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -63,7 +62,7 @@ public class CursoApi extends GenericApi<Curso, CursoService> {
     }
 
     @PutMapping("/{id}/asignar-examenes")
-    public ResponseEntity<?> asignarExamenes(@RequestBody List<ExamenBO> examenes, @PathVariable Long id){
+    public ResponseEntity<?> asignarExamenes(@RequestBody List<Examen> examenes, @PathVariable Long id){
         Curso o = this.service.asignarExamenes(id,examenes);
         if(o == null){
             return  ResponseEntity.noContent().build();
@@ -71,7 +70,7 @@ public class CursoApi extends GenericApi<Curso, CursoService> {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseResult<Curso>(o));
     }
     @PutMapping("/{id}/eliminar-examen")
-    public ResponseEntity<?> eliminarAlumnos(@RequestBody ExamenBO examen, @PathVariable Long id){
+    public ResponseEntity<?> eliminarAlumnos(@RequestBody Examen examen, @PathVariable Long id){
         Curso o = this.service.eliminarExamen(id,examen);
         if(o == null){
             return  ResponseEntity.noContent().build();

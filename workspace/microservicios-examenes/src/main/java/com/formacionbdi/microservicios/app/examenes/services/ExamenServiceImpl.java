@@ -1,14 +1,8 @@
 package com.formacionbdi.microservicios.app.examenes.services;
 
-import com.formacionbdi.microservicios.app.examenes.mappers.AsignaturaMappers;
-import com.formacionbdi.microservicios.app.examenes.mappers.ExamenMapper;
-import com.formacionbdi.microservicios.app.examenes.mappers.PreguntaMapper;
 import com.formacionbdi.microservicios.app.examenes.models.repository.AsignaturaRepository;
 import com.formacionbdi.microservicios.app.examenes.models.repository.ExamenRepository;
 import com.formacionbdi.microservicios.commons.controllers.ResponseSearchResult;
-import com.formacionbdi.microservicios.commons.examenes.bussines.AsignaturaBO;
-import com.formacionbdi.microservicios.commons.examenes.bussines.ExamenBO;
-import com.formacionbdi.microservicios.commons.examenes.bussines.PreguntaBO;
 import com.formacionbdi.microservicios.commons.examenes.models.entity.Asignatura;
 import com.formacionbdi.microservicios.commons.examenes.models.entity.Examen;
 import com.formacionbdi.microservicios.commons.examenes.models.entity.Pregunta;
@@ -38,33 +32,20 @@ public class ExamenServiceImpl implements ExamenService{
 
     @Override
     @Transactional(readOnly = true)
-    public Iterable<ExamenBO> findAll() {
-        Iterable<Examen> examenIterable = this.examenRepository.findAll();
-        if(examenIterable == null ){
-            return null;
-        }
-        List<ExamenBO> examenBOList = new ArrayList<>();
-        examenIterable.forEach(curso -> {
-            examenBOList.add(ExamenMapper.INSTANCE.ExamenBOToExamen(curso));
-        });
-        return examenBOList;
+    public Iterable<Examen> findAll() {
+        return this.examenRepository.findAll();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<ExamenBO> findById(Long id) {
-        Optional<Examen>  examenOptional = this.examenRepository.findById(id);
-        if(!examenOptional.isPresent()){
-            return Optional.empty();
-        }
-        return Optional.of(ExamenMapper.INSTANCE.ExamenBOToExamen(examenOptional.get()));
+    public Optional<Examen> findById(Long id) {
+        return this.examenRepository.findById(id);
     }
 
     @Override
     @Transactional
-    public ExamenBO save(ExamenBO entity) {
-        Examen examenDB =  this.examenRepository.save(ExamenMapper.INSTANCE.ExamenToExamenBO(entity));
-        return ExamenMapper.INSTANCE.ExamenBOToExamen(examenDB);
+    public Examen save(Examen entity) {
+        return this.examenRepository.save(entity);
     }
 
     @Override
@@ -74,22 +55,17 @@ public class ExamenServiceImpl implements ExamenService{
     }
 
     @Override
-    public ResponseSearchResult<List<ExamenBO>> findAll(Pageable pageable) {
+    public ResponseSearchResult<List<Examen>> findAll(Pageable pageable) {
         Page<Examen> examenPage = examenRepository.findAll(pageable);
         if(examenPage == null ){
             return null;
         }
-        List<ExamenBO> examenBOList = new ArrayList<>();
-        examenPage.get().forEach(examen -> {
-            examenBOList.add(ExamenMapper.INSTANCE.ExamenBOToExamen(examen));
-        });
-
-        return new ResponseSearchResult<List<ExamenBO>>(examenBOList, examenPage.getTotalPages(), examenPage.getTotalElements());
+        return new ResponseSearchResult<List<Examen>>(examenPage.getContent(), examenPage.getTotalPages(), examenPage.getTotalElements());
     }
 
     @Override
     @Transactional
-    public ExamenBO edit(Long id, ExamenBO examen) {
+    public Examen edit(Long id, Examen examen) {
         Optional<Examen> Examenoptional= this.examenRepository.findById(id);
         if(!Examenoptional.isPresent()){
             return null;
@@ -98,35 +74,28 @@ public class ExamenServiceImpl implements ExamenService{
         examenDB.setNombre(examen.getNombre());
 
         try {
-            examenDB.getPreguntas()
+            List<Pregunta> preguntas = examenDB.getPreguntas()
                     .stream()
-                    .filter(pdb->!examenDB.getPreguntas().contains(PreguntaMapper.INSTANCE.PreguntaBOToPregunta(pdb)))
-                    .forEach(examenDB::removePreguntas);
+                    .filter(pdb->!examenDB.getPreguntas().contains(pdb))
+                    .collect(Collectors.toList());
+
+            if(preguntas != null && !preguntas.isEmpty()){
+                preguntas.forEach(examenDB::removePreguntas);
+            }
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
 
-        List<Pregunta> preguntas = examen.getPreguntas()
-                .stream()
-                .map(p->PreguntaMapper.INSTANCE.PreguntaToPreguntaBO(p))
-                .collect(Collectors.toList());
-
-        examenDB.setPreguntas(preguntas);
-        return  ExamenMapper.INSTANCE.ExamenBOToExamen(this.examenRepository.save(examenDB));
+        examenDB.setPreguntas(examen.getPreguntas());
+        examenDB.setAsignaturaPadre(examen.getAsignaturaPadre());
+        examenDB.setAsignaturaHija(examen.getAsignaturaHija());
+        return  this.examenRepository.save(examenDB);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<ExamenBO> findByNombre(String term) {
-        Iterable<Examen> examenIterable = this.examenRepository.findByNombre(term);
-        if(examenIterable == null ){
-            return null;
-        }
-        List<ExamenBO> examenBOS = new ArrayList<>();
-        examenIterable.forEach(examen -> {
-            examenBOS.add(ExamenMapper.INSTANCE.ExamenBOToExamen(examen));
-        });
-        return examenBOS;
+    public List<Examen> findByNombre(String term) {
+        return  this.examenRepository.findByNombre(term);
     }
 
     @Override
@@ -141,20 +110,6 @@ public class ExamenServiceImpl implements ExamenService{
         return this.examenRepository.findExamenesIdsConRespuestasByPreguntaIds(preguntasIds);
     }
 
-    /*private ExamenBO convert(Examen examen){
-        ExamenBO examenBO = null;
-        if(examen != null){
-            examenBO = ExamenMapper.INSTANCE.ExamenBOToExamen(examen);
-            if(examen.getPreguntas() != null && !examen.getPreguntas().isEmpty()){
-                List<PreguntaBO> preguntaBOS = examen.getPreguntas()
-                        .stream()
-                        .map(pregunta -> PreguntaMapper.INSTANCE.PreguntaBOToPregunta(pregunta))
-                        .collect(Collectors.toList());
-                examenBO.setPreguntas(preguntaBOS);
-            }
-        }
-        return examenBO;
-    }*/
 
 
 }
